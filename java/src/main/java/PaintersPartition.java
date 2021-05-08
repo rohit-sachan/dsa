@@ -10,7 +10,7 @@ public class PaintersPartition {
         arrayList.add(6);
         arrayList.add(2);
         arrayList.add(3);
-        System.out.println(new PaintersPartition().paint(3,1, arrayList));
+        System.out.println(new PaintersPartition().paint(3,1, arrayList) + "Ans = "+ 8);
     }
 
 
@@ -18,54 +18,68 @@ public class PaintersPartition {
         int hi = 0;
         int lo = -1;
         ArrayList<Integer> arr = new ArrayList<Integer>(C.size());
-        for(int  i = 0 ;  i< C.size(); i++){
-            arr.add(C.get(i)*B);
+        for (Integer value : C) {
+            arr.add(value * B);
         }
-        for(int  i = 0 ;  i< arr.size(); i++){
-            hi = hi + arr.get(i);
-            lo = Math.max(lo, arr.get(i));
-        }
-
-        System.out.println("hi " + hi + ", lo " +lo );
-        int mid = (hi+lo)/2;
-
-        while(possiblyAccommodatedPainters(mid, A, arr) < A){
-
+        for (Integer integer : arr) {
+            hi = hi + integer;
+            lo = Math.max(lo, integer);
         }
 
-        return mid;
+        return accommodatedPainters(lo, hi, A, arr);
     }
 
     /**
-     * checks if
-     * possible to accommodate the mid time
-     **/
-    private int possiblyAccommodatedPainters(int mid, int A, ArrayList<Integer> C){
-        System.out.println("mid = " + mid);
+     * checks if possible to accommodate the mid time
+     * @return -1 if lesser number of painters can be accommodated for the given [mid],
+     * +1 if higher number of painters can be accommodated
+     * */
+    private int accommodatedPainters(int lo, int hi, int A, ArrayList<Integer> C){
+        int midTime = (lo + hi)/2;
+        System.out.println("------------- mid= " + midTime+ " lo="+ lo+" hi="+hi+" ------------------");
+
         long sum = 0;
         int accommodatedPainters = 0;
-        for(int n=0; n< C.size(); n++){
-            System.out.println("idx="+ n+ " block="+C.get(n));
-            sum = sum+C.get(n);
-            if(sum > mid || n == C.size()-1){
-                if(n == C.size()-1){
-                    System.out.println("current idx=" + n +" reached to the end of array, blocks count=" + C.size());
-                }else {
-                    System.out.println("hmm, sum=" + sum + " exceeds " + mid + ", so we need to consider new set of blocks. current idx=" + n + ", blockSize=" + C.get(n));
-                }
+        for(int n=0; n< C.size(); n++) {
+            System.out.println("idx=" + n + " block=" + C.get(n));
+            sum = sum + C.get(n);
+            if (sum > midTime) {
+                System.out.println("current idx=" + n + " inclusion of current block EXCEEDS the midTime="+ midTime+", sum="+ sum );
                 sum = 0;
-                accommodatedPainters++; // so one more painter is included
-                if(n == C.size()-1){
-                    continue;
-                }
                 n--; // and use current block again in next set as this block inclusion results in higher sum
+                accommodatedPainters++; // so one more painter is included
+            }
+            if (sum == midTime){
+                System.out.println("current idx=" + n + " inclusion of current block EQUALS the midTime="+ midTime+", sum="+ sum );
+                sum = 0;
+                accommodatedPainters++;
+            }
+            if(sum < midTime && n == C.size() - 1){
+                System.out.println("current idx=" + n + " inclusion of current block LESS THAN the midTime="+ midTime+", sum="+ sum );
+                accommodatedPainters++;
+            }
+            if (n == C.size() - 1 && accommodatedPainters == A) { // if reached last then we dont need to reduce in inorder to reconsider
+                System.out.println("current idx=" + n + " reached to the end of array, total blocks count=" + C.size());
+                break;
             }
         }
 
-        System.out.println("accommodated painters="+ accommodatedPainters + " minTime="+ mid );
+        System.out.println("accommodated painters="+ accommodatedPainters + " midTime="+ midTime );
 
-        return accommodatedPainters;
+        // converged to solution
+        if (lo == midTime && accommodatedPainters == A)
+            return lo;
+        else {
 
+            // if equal lets get ahead of ourselves and try to minimize the time,
+            // if less accommodatedPainters then obviously we can minimize the time and try to accommodate more painters
+
+            if (accommodatedPainters <= A)
+                return accommodatedPainters(lo, midTime, A, C);
+            else {//  if more accommodatedPainters means time provided is not  enough and we need to increase the mid
+                return accommodatedPainters(midTime, hi, A, C);
+            }
+        }
     }
 
 }
