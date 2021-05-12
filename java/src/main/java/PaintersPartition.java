@@ -67,17 +67,20 @@ public class PaintersPartition {
         System.out.println("accommodated painters="+ accommodatedPainters + " midTime="+ midTime );
 
         // converged to solution
-        if (lo == midTime && accommodatedPainters == A)
+        if (lo >= hi && accommodatedPainters == A)
             return lo;
         else {
 
             // if equal lets get ahead of ourselves and try to minimize the time,
             // if less accommodatedPainters then obviously we can minimize the time and try to accommodate more painters
-
-            if (accommodatedPainters <= A)
-                return accommodatedPainters(lo, midTime, A, C);
-            else {//  if more accommodatedPainters means time provided is not  enough and we need to increase the mid
-                return accommodatedPainters(midTime, hi, A, C);
+            if(lo<=hi) {
+                if (accommodatedPainters <= A)
+                    return accommodatedPainters(lo, midTime - 1, A, C);
+                else {//  if more accommodatedPainters means time provided is not  enough and we need to increase the mid
+                    return accommodatedPainters(midTime + 1, hi, A, C);
+                }
+            } else {
+                return lo;
             }
         }
     }
