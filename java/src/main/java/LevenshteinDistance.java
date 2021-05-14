@@ -3,11 +3,19 @@ import utils.Utils;
 public class LevenshteinDistance {
     public static void main(String[] args) {
 //        System.out.println(findEditDistance("saturday", "sundays") ==4);
-        System.out.println(findEditDistance("abc", "yabd") ==2);
+        System.out.println(levenshteinDistance("abc", "yabd") ==2);
     }
 
-    private static int findEditDistance(String str1, String str2) {
+    public static int levenshteinDistance(String str1, String str2) {
+        if(isNullOrEmpty(str1)){
+            return str2.length();
+        }
+        if(isNullOrEmpty(str2)){
+            return str1.length();
+        }
+
         int[][] mem = new int[str1.length()][str2.length()];
+
         if (str1.charAt(0)== str2.charAt(0)){
             mem[0][0] = 0;
         } else{
@@ -15,12 +23,9 @@ public class LevenshteinDistance {
         }
         for (int r = 0; r < str1.length() ; r++) {
             for (int c = 0; c < str2.length(); c++) {
-                if(r ==0 && c==0) continue; // need not to handle upper left start
-                if(r ==0 && c>0){
-                    mem[r][c]=mem[r][c-1]+1;
-                }else if(c ==0 && r>0){
-                    mem[r][c]=mem[r-1][c]+1;
-                } else if(str1.charAt(r) == str2.charAt(c)) {
+                if(r ==0 && c==0) continue; // need not to handle upper left start, already handled earlier
+
+                else if(str1.charAt(r) == str2.charAt(c)) {
                     mem[r][c] = getMinOfThree(mem, r,c);
                 } else {
                     mem[r][c] = getMinOfThree(mem, r,c) + 1;
@@ -28,8 +33,12 @@ public class LevenshteinDistance {
             }
 
         }
-        Utils.print2DIntArray(mem);
+         Utils.print2DIntArray(mem);
         return mem[str1.length()-1][str2.length()-1];
+    }
+
+    private static boolean isNullOrEmpty(String str){
+        return !(str != null && !str.trim().isEmpty());
     }
 
     private static int getMinOfThree(int[][] mem, int r, int c) {
