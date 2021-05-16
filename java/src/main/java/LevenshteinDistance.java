@@ -2,49 +2,47 @@ import utils.Utils;
 
 public class LevenshteinDistance {
     public static void main(String[] args) {
-//        System.out.println(findEditDistance("saturday", "sundays") ==4);
-        System.out.println(levenshteinDistance("abc", "yabd") ==2);
+        System.out.println(levenshteinDistance("saturday", "sundays") ==4);
+//        System.out.println(levenshteinDistance("abc", "yabd") ==2);
+//        System.out.println("LavenshteinDistance= " + levenshteinDistance("biting", "mitten"));
     }
 
-    public static int levenshteinDistance(String str1, String str2) {
-        if(isNullOrEmpty(str1)){
-            return str2.length();
+    public static int levenshteinDistance(String sourceStr, String targetStr) {
+        // +1 in size as we are considering EMPTY char as first then starting with strings
+        int[][] mem = new int[targetStr.length() + 1][sourceStr.length() + 1];
+
+        for (int i = 0; i < mem[0].length; i++) {
+            // first row to be direct char's deletion in order to become EMPTY because sourceStr
+            // is increasing by 1 char each in each col (row=0) and in order ot match EMPTY targetStr needs deletion
+            mem[0][i] = i;
         }
-        if(isNullOrEmpty(str2)){
-            return str1.length();
+        for (int i = 0; i < mem.length; i++) {
+            // first col to be direct char's addition in order to become EMPTY, because target string is increasing by each row in col=0
+            mem[i][0] = i;
         }
 
-        int[][] mem = new int[str1.length()][str2.length()];
-
-        if (str1.charAt(0)== str2.charAt(0)){
-            mem[0][0] = 0;
-        } else{
-            mem[0][0] = 1;
-        }
-        for (int r = 0; r < str1.length() ; r++) {
-            for (int c = 0; c < str2.length(); c++) {
-                if(r ==0 && c==0) continue; // need not to handle upper left start, already handled earlier
-
-                else if(str1.charAt(r) == str2.charAt(c)) {
-                    mem[r][c] = getMinOfThree(mem, r,c);
+        for (int r = 1; r <= targetStr.length(); r++) {
+            for (int c = 1; c <= sourceStr.length(); c++) {
+                if (sourceStr.charAt(c-1) == targetStr.charAt(r-1)) {
+                    // if same char then no need to do any operation just copy over
+                    mem[r][c] = mem[r-1][c-1];
                 } else {
-                    mem[r][c] = getMinOfThree(mem, r,c) + 1;
+                    mem[r][c] = getMinOfThree(mem, r, c) + 1;
                 }
             }
-
         }
-         Utils.print2DIntArray(mem);
-        return mem[str1.length()-1][str2.length()-1];
+        Utils.print2DIntArray(mem);
+        return mem[targetStr.length()][sourceStr.length()];
     }
 
-    private static boolean isNullOrEmpty(String str){
+    private static boolean isNullOrEmpty(String str) {
         return !(str != null && !str.trim().isEmpty());
     }
 
     private static int getMinOfThree(int[][] mem, int r, int c) {
-        int diagonalVal = (r>0 && c>0) ? mem[r - 1][c - 1] : Integer.MAX_VALUE;
-        int sameRowPrevVal =(c>0) ? mem[r][c - 1]: Integer.MAX_VALUE;
-        int upperRowSameCol =(r>0 )? mem[r - 1][c]: Integer.MAX_VALUE;
+        int diagonalVal = mem[r - 1][c - 1];
+        int sameRowPrevVal = mem[r][c - 1];
+        int upperRowSameCol = mem[r - 1][c];
         return Math.min(Math.min(diagonalVal, sameRowPrevVal), upperRowSameCol);
     }
 
