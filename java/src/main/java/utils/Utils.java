@@ -10,4 +10,8 @@ public class Utils {
         }
         System.out.println("------------------------------------- ");
     }
+
+    public static boolean isNullOrEmpty(String str){
+        return !(str != null && !str.trim().isEmpty());
+    }
 }
