@@ -1,5 +1,7 @@
 package utils;
 
+import org.assertj.core.api.Assertions;
+
 public class Utils {
     public static void print2DIntArray(int[][] arr){
         for (int r = 0; r < arr.length; r++) {         //for loop for row iteration.
@@ -13,5 +15,9 @@ public class Utils {
 
     public static boolean isNullOrEmpty(String str){
         return !(str != null && !str.trim().isEmpty());
+    }
+
+    public static void assertTrue(boolean b) {
+        Assertions.assertThat(b).isTrue();
     }
 }
