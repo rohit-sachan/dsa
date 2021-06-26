@@ -13,6 +13,26 @@ public class Utils {
         System.out.println("------------------------------------- ");
     }
 
+    public static void print2DIntArray(boolean[][] arr, char[] charsXAxis, char[] charsYAxis){
+        System.out.print("   ");
+        for (int i = 0; i < charsXAxis.length; i++) {
+            System.out.print(charsXAxis[i] + "  ");
+        }
+        System.out.println();
+        for (int i = 0; i < charsXAxis.length; i++) {
+            System.out.print("---");
+        }
+        System.out.println();
+        for (int r = 0; r < arr.length; r++) {         //for loop for row iteration.
+            System.out.print(charsYAxis[r] + "| ");
+            for (int c = 0; c < arr[r].length; c++) {   //for loop for column iteration.
+                System.out.print((arr[r][c]?"T":"-") + "  ");
+            }
+            System.out.println();
+        }
+        System.out.println("------------------------------------- ");
+    }
+
     public static boolean isNullOrEmpty(String str){
         return !(str != null && !str.trim().isEmpty());
     }
