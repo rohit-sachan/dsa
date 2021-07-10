@@ -53,6 +53,7 @@ public class ShortestPathDijkastra {
         Arrays.fill(minDistances, Integer.MAX_VALUE);
         minDistances[start] = 0;
         exploreVertex(start, edges, minDistances);
+
         for (int i = 0; i < minDistances.length; i++) {
             minDistances[i] = (minDistances[i] == Integer.MAX_VALUE) ? -1 : minDistances[i];
         }
@@ -61,25 +62,24 @@ public class ShortestPathDijkastra {
         return minDistances;
     }
 
-    private void exploreVertex(int v, int[][][] edges, int[] minDistances) {
+    private void exploreVertex(int v, int[][][] adjacency, int[] allMinDistances) {
         PriorityQueue<NodeAndDistance> pq = new PriorityQueue<>();
         pq.add(new NodeAndDistance(v, 0));
 
         //Its greedy BFS search that's why using PQ instead of queue
         while (!pq.isEmpty()) {
-            System.out.println("minDistances = " + Arrays.toString(minDistances) + ", pq = " + pq);
+            System.out.println("allMinDistances = " + Arrays.toString(allMinDistances) + ", pq = " + pq);
             NodeAndDistance node = pq.poll();
-            int[][] adj = edges[node.vertex];
-            for (int[] edgeWeights : adj) {
-                int adjVertex = edgeWeights[0];
-                int d = minDistances[node.vertex] + edgeWeights[1];
-                // And add edge in pq for exploration if its total cost is really better than the existing total cost
-                if(d < minDistances[adjVertex]){
-                    System.out.println("adjVertex = " + adjVertex +" d="+ d + " < "+ minDistances[adjVertex]);
-                    minDistances[adjVertex] =  d;
-                    pq.offer(new NodeAndDistance(adjVertex, d));
+
+            // And add edge in pq for exploration if its total cost is really better than the existing total cost
+            Arrays.stream(adjacency[node.vertex]).forEach(edgeAndDistance -> {
+                int d = allMinDistances[node.vertex] + edgeAndDistance[1];
+                if (d < allMinDistances[edgeAndDistance[0]]) { // this is where we prefer shorter distance
+                    System.out.println("adjVertex = " + edgeAndDistance[0] + " d=" + d + " < " + allMinDistances[edgeAndDistance[0]]);
+                    allMinDistances[edgeAndDistance[0]] = d;
+                    pq.offer(new NodeAndDistance(edgeAndDistance[0], d));
                 }
-            }
+            });
         }
     }
 }
