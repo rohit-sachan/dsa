@@ -8,7 +8,7 @@ public class Utils {
     public static void print2DIntArray(int[][] arr){
         for (int r = 0; r < arr.length; r++) {         //for loop for row iteration.
             for (int c = 0; c < arr[r].length; c++) {   //for loop for column iteration.
-                System.out.printf("%-4d", arr[r][c]);
+                System.out.printf("%-4s", arr[r][c]== Integer.MAX_VALUE ? "\u221E": arr[r][c]+"" );
             }
             System.out.println();
         }
